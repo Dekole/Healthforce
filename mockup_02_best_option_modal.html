@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HealthForce - Best Option Modal Mockup</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --card: #131820;
+    --card-hover: #1a212c;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --text: #e5e7eb;
+    --text-dim: #9ca3af;
+    --text-muted: #6b7280;
+    --accent: #14b8a6;
+    --accent-dim: rgba(20,184,166,0.12);
+    --critical: #ef4444;
+    --critical-bg: rgba(239,68,68,0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245,158,11,0.1);
+    --success: #10b981;
+    --success-bg: rgba(16,185,129,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* Backdrop simulation */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(2px);
+    z-index: 1;
+  }
+
+  /* Faint dashboard preview behind */
+  .behind {
+    padding: 40px;
+    opacity: 0.3;
+  }
+  .behind .stub {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    height: 80px; margin-bottom: 12px;
+  }
+
+  /* Modal */
+  .modal {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 92%;
+    max-width: 1100px;
+    max-height: 92vh;
+    overflow-y: auto;
+    background: var(--card);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    padding: 28px;
+    z-index: 2;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+  }
+
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .modal-title { font-size: 22px; font-weight: 700; }
+  .modal-sub { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+  .close-btn { background: transparent; color: var(--text-dim); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 16px; }
+
+  /* Best Decision Hero */
+  .hero {
+    background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(20,184,166,0.04));
+    border: 1px solid rgba(20,184,166,0.3);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .hero-tag { font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .hero-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .hero-line { font-size: 16px; color: var(--text); }
+  .hero-line .save { color: var(--success); font-weight: 700; }
+  .hero-sub { color: var(--text-dim); font-size: 13px; margin-top: 8px; }
+
+  /* Layout: options column + chart */
+  .layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+  /* Option cards */
+  .options-list { display: flex; flex-direction: column; gap: 12px; }
+  .option-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    cursor: pointer;
+    position: relative;
+    transition: border 0.15s;
+  }
+  .option-card.selected { border: 2px solid var(--accent); padding: 17px; }
+  .option-card:hover { border-color: var(--border-strong); }
+  .option-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .option-icon { width: 32px; height: 32px; border-radius: 6px; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .option-name { font-size: 16px; font-weight: 600; }
+  .best-badge {
+    margin-left: auto;
+    background: var(--accent-dim); color: var(--accent);
+    padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .opt-stat .label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .opt-stat .value { font-size: 18px; font-weight: 700; }
+  .opt-stat .value.warning { color: var(--warning); }
+  .opt-stat .value.success { color: var(--success); }
+  .opt-stat .value.muted { color: var(--text-muted); }
+  .savings-line {
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);
+    color: var(--success); font-weight: 600; font-size: 13px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .savings-line.baseline { color: var(--text-muted); font-weight: 500; }
+
+  /* Chart card */
+  .chart-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+  .chart-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .bar-label { width: 100px; font-size: 12px; color: var(--text-dim); flex-shrink: 0; }
+  .bar-track { flex: 1; height: 28px; background: rgba(255,255,255,0.03); border-radius: 4px; position: relative; }
+  .bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 11px; font-weight: 600; color: var(--bg); }
+  .bar-fill.reassign { background: var(--accent); width: 40%; }
+  .bar-fill.float { background: #0d9488; width: 44%; }
+  .bar-fill.ot { background: var(--warning); width: 75%; color: #1a1a1a; }
+  .bar-fill.agency { background: var(--critical); width: 100%; color: white; }
+  .axis { display: flex; justify-content: space-between; padding-left: 110px; margin-top: 8px; font-size: 10px; color: var(--text-muted); }
+
+  /* Footer */
+  .modal-footer {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-summary { color: var(--text-dim); font-size: 13px; }
+  .footer-summary strong { color: var(--text); font-weight: 600; }
+  .footer-actions { display: flex; gap: 10px; }
+  .btn { padding: 10px 18px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; border: 1px solid transparent; }
+  .btn-cancel { background: transparent; color: var(--text-dim); border-color: var(--border-strong); }
+  .btn-confirm { background: var(--accent); color: var(--bg); }
+
+  /* Safety tag */
+  .safety { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; display: inline-block; }
+  .safety.acceptable { background: var(--warning-bg); color: var(--warning); }
+  .safety.safe { background: var(--success-bg); color: var(--success); }
+  .safety.risk { background: var(--critical-bg); color: var(--critical); }
+
+  .footnote { color: var(--text-muted); font-size: 11px; text-align: center; padding: 16px; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); }
+/* Note: This mockup shows the modal overlay only. Full sidebar with Shift Handoff appears in Dashboard mockup. */
+</style>
+</head>
+<body>
+
+<!-- Faint background context -->
+<div class="behind">
+  <div class="stub"></div>
+  <div class="stub" style="height:160px;"></div>
+  <div class="stub" style="height:120px;"></div>
+</div>
+
+<div class="backdrop"></div>
+
+<!-- Modal -->
+<div class="modal">
+
+  <div class="modal-header">
+    <div>
+      <div class="modal-title">Best Staffing Option</div>
+      <div class="modal-sub">What's the best low-cost safe option for 5 open positions this shift?</div>
+    </div>
+    <button class="close-btn">&times;</button>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">&#9733; BEST DECISION RIGHT NOW</div>
+    <div class="hero-title">Cross-Unit Reassignment</div>
+    <div class="hero-line">$1,520 for this shift &mdash; <span class="save">save $2,280 vs agency</span></div>
+    <div class="hero-sub">Use internal coverage instead of agency to reduce avoidable labor cost.</div>
+  </div>
+
+  <!-- Layout -->
+  <div class="layout">
+
+    <!-- Options column -->
+    <div class="options-list">
+
+      <!-- Reassignment (selected) -->
+      <div class="option-card selected">
+        <div class="option-header">
+          <div class="option-icon">$</div>
+          <div class="option-name">Cross-Unit Reassignment</div>
+          <span class="best-badge">&#9733; Best Option</span>
+        </div>
+        <div class="option-grid">
+          <div class="opt-stat">
+            <div class="label">Cost / Hr</div>
+            <div class="value">$38</div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Shift Total</div>
+            <div class="value">$1,520</div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Safety</div>
+            <div class="value warning"><span class="safety acceptable">Acceptable</span></div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Available</div>
+            <div class="value muted">&#9201; 30 min</div>
+          </div>
+        </div>
+        <div class="savings-line">&#8595; Save $2,280 vs agency</div>
+      </div>
+
+      <!-- Float Pool -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-icon">$</div>
+          <div class="option-name">Float Pool</div>
+        </div>
+        <div class="option-grid">
+          <div class="opt-stat">
+            <div class="label">Cost / Hr</div>
+            <div class="value">$42</div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Shift Total</div>
+            <div class="value">$1,680</div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Safety</div>
+            <div class="value success"><span class="safety safe">Safe</span></div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Available</div>
+            <div class="value muted">&#9201; 30 min</div>
+          </div>
+        </div>
+        <div class="savings-line">&#8595; Save $2,120 vs agency</div>
+      </div>
+
+      <!-- Approve Overtime -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-icon">$</div>
+          <div class="option-name">Approve Overtime</div>
+        </div>
+        <div class="option-grid">
+          <div class="opt-stat">
+            <div class="label">Cost / Hr</div>
+            <div class="value">$60</div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Shift Total</div>
+            <div class="value">$2,400</div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Safety</div>
+            <div class="value warning"><span class="safety acceptable">Acceptable</span></div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Available</div>
+            <div class="value muted">&#9201; Now</div>
+          </div>
+        </div>
+        <div class="savings-line">&#8595; Save $1,400 vs agency</div>
+      </div>
+
+      <!-- Agency baseline -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-icon" style="background:var(--critical-bg);color:var(--critical);">$</div>
+          <div class="option-name">Call Agency</div>
+          <span style="margin-left:auto;color:var(--text-muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">Baseline</span>
+        </div>
+        <div class="option-grid">
+          <div class="opt-stat">
+            <div class="label">Cost / Hr</div>
+            <div class="value">$95</div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Shift Total</div>
+            <div class="value">$3,800</div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Safety</div>
+            <div class="value success"><span class="safety safe">Safe</span></div>
+          </div>
+          <div class="opt-stat">
+            <div class="label">Available</div>
+            <div class="value muted">&#9201; 60 min</div>
+          </div>
+        </div>
+        <div class="savings-line baseline">&mdash; Reference cost (highest)</div>
+      </div>
+
+    </div>
+
+    <!-- Chart column -->
+    <div class="chart-card">
+      <div class="chart-title">&#9633; Cost Comparison</div>
+
+      <div class="chart-bar-row">
+        <div class="bar-label">Reassignment</div>
+        <div class="bar-track"><div class="bar-fill reassign">$1,520</div></div>
+      </div>
+
+      <div class="chart-bar-row">
+        <div class="bar-label">Float Pool</div>
+        <div class="bar-track"><div class="bar-fill float">$1,680</div></div>
+      </div>
+
+      <div class="chart-bar-row">
+        <div class="bar-label">Overtime</div>
+        <div class="bar-track"><div class="bar-fill ot">$2,400</div></div>
+      </div>
+
+      <div class="chart-bar-row">
+        <div class="bar-label">Agency</div>
+        <div class="bar-track"><div class="bar-fill agency">$3,800</div></div>
+      </div>
+
+      <div class="axis">
+        <span>$0</span><span>$1,000</span><span>$2,000</span><span>$3,000</span><span>$4,000</span>
+      </div>
+
+      <div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">If Approved</div>
+        <div style="font-size:20px;font-weight:700;color:var(--success);">+$2,280 saved</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">vs agency baseline</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <div class="footer-summary">
+      Selected: <strong>Cross-Unit Reassignment</strong> &middot; Affected units: <strong>Med-Surg &rarr; ER (2 RN)</strong>
+    </div>
+    <div class="footer-actions">
+      <button class="btn btn-cancel">Cancel</button>
+      <button class="btn btn-confirm">Confirm &amp; Reassign</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="footnote">HealthForce Capacity Planner V1 &middot; Best Option Modal Mockup &middot; Not Production Code</div>
+
+</body>
+</html>

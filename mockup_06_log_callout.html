@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HealthForce - Log Call-out Modal Mockup</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --card: #131820;
+    --card-hover: #1a212c;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --text: #e5e7eb;
+    --text-dim: #9ca3af;
+    --text-muted: #6b7280;
+    --accent: #14b8a6;
+    --accent-dim: rgba(20,184,166,0.12);
+    --critical: #ef4444;
+    --critical-bg: rgba(239,68,68,0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245,158,11,0.1);
+    --success: #10b981;
+    --success-bg: rgba(16,185,129,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+    background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh;
+  }
+
+  /* Backdrop and faint behind */
+  .behind { padding: 40px; opacity: 0.25; }
+  .behind .stub { background: var(--card); border: 1px solid var(--border); border-radius: 10px; height: 80px; margin-bottom: 12px; }
+  .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(2px); z-index: 1; }
+
+  /* Modal */
+  .modal {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 92%;
+    max-width: 720px;
+    max-height: 92vh;
+    overflow-y: auto;
+    background: var(--card);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    z-index: 2;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+  }
+
+  .modal-header {
+    padding: 22px 28px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .modal-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--critical-bg); color: var(--critical);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0; margin-right: 14px;
+  }
+  .header-text { flex: 1; }
+  .modal-title { font-size: 20px; font-weight: 700; }
+  .modal-sub { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+  .close-btn { background: transparent; color: var(--text-dim); border: 1px solid var(--border); width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 16px; flex-shrink: 0; }
+
+  /* Step progress */
+  .steps {
+    padding: 14px 28px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .step { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); }
+  .step.active { color: var(--accent); }
+  .step.done { color: var(--text-dim); }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,0.05); color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .step.active .step-num { background: var(--accent); color: var(--bg); }
+  .step.done .step-num { background: var(--text-dim); color: var(--bg); }
+  .step-arrow { color: var(--text-muted); }
+
+  .modal-body { padding: 24px 28px; }
+
+  /* Form sections */
+  .field-block { margin-bottom: 22px; }
+  .field-label {
+    font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600;
+  }
+  .field-required { color: var(--critical); margin-left: 2px; }
+
+  /* Unit picker (compact dropdown style with selected state) */
+  .unit-select {
+    background: var(--bg); border: 1px solid var(--accent);
+    border-radius: 8px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer;
+  }
+  .unit-name { font-size: 16px; font-weight: 600; }
+  .unit-meta { color: var(--text-dim); font-size: 12px; margin-top: 2px; }
+  .unit-status-pill {
+    margin-left: auto;
+    padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700;
+    background: var(--critical-bg); color: var(--critical);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .change-link { color: var(--accent); font-size: 12px; cursor: pointer; font-weight: 500; }
+
+  /* Nurse picker as card list */
+  .search-bar {
+    background: var(--bg); border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .search-bar input {
+    background: transparent; border: none; color: var(--text);
+    flex: 1; font-size: 13px; outline: none;
+  }
+  .search-bar .icon { color: var(--text-muted); }
+  .filter-hint { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+
+  .nurse-list { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto; padding-right: 4px; }
+  .nurse-card {
+    background: var(--bg); border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 10px 14px;
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+    transition: border 0.15s;
+  }
+  .nurse-card:hover { border-color: rgba(20,184,166,0.4); }
+  .nurse-card.selected { border-color: var(--accent); background: rgba(20,184,166,0.06); }
+  .nurse-radio {
+    width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border-strong);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .nurse-card.selected .nurse-radio { border-color: var(--accent); }
+  .nurse-card.selected .nurse-radio::after {
+    content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  }
+  .nurse-info { flex: 1; }
+  .nurse-name-text { font-size: 14px; font-weight: 600; }
+  .nurse-role-line { font-size: 11px; color: var(--text-dim); margin-top: 2px; display: flex; align-items: center; gap: 8px; }
+  .role-chip { padding: 1px 6px; background: rgba(20,184,166,0.15); color: var(--accent); border-radius: 3px; font-size: 10px; font-weight: 700; }
+  .role-chip.lpn { background: rgba(6,182,212,0.15); color: #06b6d4; }
+  .role-chip.cna { background: rgba(139,92,246,0.15); color: #a78bfa; }
+  .nurse-stat { color: var(--text-muted); font-size: 11px; }
+
+  /* Reason buttons */
+  .reason-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .reason-btn {
+    background: var(--bg); border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 12px 10px;
+    color: var(--text); font-size: 13px; font-weight: 500;
+    cursor: pointer; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .reason-btn:hover { border-color: rgba(20,184,166,0.4); }
+  .reason-btn.selected { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+  .reason-icon { font-size: 18px; }
+  .reason-label { font-size: 12px; }
+
+  /* Cost preview teaser */
+  .cost-preview {
+    background: linear-gradient(135deg, rgba(20,184,166,0.08), rgba(20,184,166,0.02));
+    border: 1px solid rgba(20,184,166,0.25);
+    border-radius: 10px; padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .preview-icon { color: var(--accent); font-size: 16px; }
+  .preview-text { flex: 1; font-size: 12px; color: var(--text-dim); }
+  .preview-text strong { color: var(--text); }
+  .preview-saving { color: var(--success); font-weight: 700; font-size: 14px; }
+
+  /* Footer */
+  .modal-footer {
+    padding: 16px 28px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(0,0,0,0.15);
+  }
+  .footer-summary { color: var(--text-dim); font-size: 12px; }
+  .footer-summary strong { color: var(--text); }
+  .footer-actions { display: flex; gap: 10px; }
+  .btn { padding: 9px 18px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; border: 1px solid transparent; }
+  .btn-cancel { background: transparent; color: var(--text-dim); border-color: var(--border-strong); }
+  .btn-continue { background: var(--accent); color: var(--bg); padding: 10px 22px; }
+
+  .footnote { color: var(--text-muted); font-size: 11px; text-align: center; padding: 16px; position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); }
+</style>
+</head>
+<body>
+
+<!-- Faint background context -->
+<div class="behind">
+  <div class="stub"></div>
+  <div class="stub" style="height:160px;"></div>
+  <div class="stub" style="height:120px;"></div>
+</div>
+
+<div class="backdrop"></div>
+
+<!-- Modal -->
+<div class="modal">
+
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="modal-icon">&#9888;</div>
+    <div class="header-text">
+      <div class="modal-title">Log Call-out</div>
+      <div class="modal-sub">A nurse cannot work their shift. Capture details, then find the lowest-cost safe replacement.</div>
+    </div>
+    <button class="close-btn">&times;</button>
+  </div>
+
+  <!-- Step progress -->
+  <div class="steps">
+    <div class="step active">
+      <div class="step-num">1</div>
+      Capture details
+    </div>
+    <span class="step-arrow">&rarr;</span>
+    <div class="step">
+      <div class="step-num">2</div>
+      Choose replacement
+    </div>
+    <span class="step-arrow">&rarr;</span>
+    <div class="step">
+      <div class="step-num">3</div>
+      Confirm &amp; log
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="modal-body">
+
+    <!-- Unit -->
+    <div class="field-block">
+      <div class="field-label">Unit<span class="field-required">*</span></div>
+      <div class="unit-select">
+        <div>
+          <div class="unit-name">Emergency Room</div>
+          <div class="unit-meta">Currently 8 RN on shift &middot; Ratio 4.3:1 (target 4:1)</div>
+        </div>
+        <span class="unit-status-pill">Critical</span>
+        <span class="change-link">Change</span>
+      </div>
+    </div>
+
+    <!-- Nurse -->
+    <div class="field-block">
+      <div class="field-label">Which nurse called out?<span class="field-required">*</span></div>
+
+      <div class="search-bar">
+        <span class="icon">&#128269;</span>
+        <input type="text" placeholder="Search by name..." value="">
+      </div>
+      <div class="filter-hint">Showing nurses currently on Emergency Room. Pulled from Roster.</div>
+
+      <div class="nurse-list">
+        <div class="nurse-card">
+          <div class="nurse-radio"></div>
+          <div class="nurse-info">
+            <div class="nurse-name-text">Maria Rodriguez</div>
+            <div class="nurse-role-line"><span class="role-chip">RN</span> Primary &middot; on shift 5h 42m</div>
+          </div>
+        </div>
+        <div class="nurse-card selected">
+          <div class="nurse-radio"></div>
+          <div class="nurse-info">
+            <div class="nurse-name-text">Anna Williams</div>
+            <div class="nurse-role-line"><span class="role-chip">RN</span> Primary &middot; on shift 5h 42m</div>
+          </div>
+          <div class="nurse-stat">Selected</div>
+        </div>
+        <div class="nurse-card">
+          <div class="nurse-radio"></div>
+          <div class="nurse-info">
+            <div class="nurse-name-text">David Park</div>
+            <div class="nurse-role-line"><span class="role-chip">RN</span> Primary &middot; on shift 5h 42m</div>
+          </div>
+        </div>
+        <div class="nurse-card">
+          <div class="nurse-radio"></div>
+          <div class="nurse-info">
+            <div class="nurse-name-text">Lisa Thompson</div>
+            <div class="nurse-role-line"><span class="role-chip">RN</span> Primary &middot; on shift 5h 42m</div>
+          </div>
+        </div>
+        <div class="nurse-card">
+          <div class="nurse-radio"></div>
+          <div class="nurse-info">
+            <div class="nurse-name-text">James O'Brien</div>
+            <div class="nurse-role-line"><span class="role-chip">RN</span> Primary &middot; on shift 5h 42m (OT)</div>
+          </div>
+        </div>
+        <div class="nurse-card">
+          <div class="nurse-radio"></div>
+          <div class="nurse-info">
+            <div class="nurse-name-text">Sarah Chen</div>
+            <div class="nurse-role-line"><span class="role-chip">RN</span> Float from Med-Surg &middot; on shift 2h 01m</div>
+          </div>
+        </div>
+        <div class="nurse-card">
+          <div class="nurse-radio"></div>
+          <div class="nurse-info">
+            <div class="nurse-name-text">Jenny Lee</div>
+            <div class="nurse-role-line"><span class="role-chip lpn">LPN</span> Primary &middot; on shift 5h 42m</div>
+          </div>
+        </div>
+        <div class="nurse-card">
+          <div class="nurse-radio"></div>
+          <div class="nurse-info">
+            <div class="nurse-name-text">Carlos Mendoza</div>
+            <div class="nurse-role-line"><span class="role-chip cna">CNA</span> Primary &middot; on shift 5h 42m</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reason -->
+    <div class="field-block">
+      <div class="field-label">Reason<span class="field-required">*</span></div>
+      <div class="reason-grid">
+        <button class="reason-btn">
+          <div class="reason-icon">&#127973;</div>
+          <div class="reason-label">Sick</div>
+        </button>
+        <button class="reason-btn selected">
+          <div class="reason-icon">&#127968;</div>
+          <div class="reason-label">Family Emergency</div>
+        </button>
+        <button class="reason-btn">
+          <div class="reason-icon">&times;</div>
+          <div class="reason-label">No-show</div>
+        </button>
+        <button class="reason-btn">
+          <div class="reason-icon">&#127979;</div>
+          <div class="reason-label">Training</div>
+        </button>
+        <button class="reason-btn">
+          <div class="reason-icon">&#9878;</div>
+          <div class="reason-label">Jury Duty</div>
+        </button>
+        <button class="reason-btn">
+          <div class="reason-icon">&#8230;</div>
+          <div class="reason-label">Other</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Cost preview teaser -->
+    <div class="cost-preview">
+      <div class="preview-icon">&#36;</div>
+      <div class="preview-text">
+        <strong>Next:</strong> System will rank fill alternatives (Cross-Unit Reassignment, Float Pool, Overtime, Agency) by cost and safety. Best Option for this situation:
+      </div>
+      <div class="preview-saving">~$680 savings</div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <div class="footer-summary">
+      <strong>Anna Williams</strong> calling out from <strong>Emergency Room</strong> &middot; family emergency
+    </div>
+    <div class="footer-actions">
+      <button class="btn btn-cancel">Cancel</button>
+      <button class="btn btn-continue">Continue &rarr; Find Replacement</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="footnote">HealthForce Capacity Planner V1 &middot; Log Call-out Modal Mockup &middot; Not Production Code</div>
+
+</body>
+</html>

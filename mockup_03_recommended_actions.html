@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HealthForce - Recommended Actions Mockup</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --card: #131820;
+    --card-hover: #1a212c;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --text: #e5e7eb;
+    --text-dim: #9ca3af;
+    --text-muted: #6b7280;
+    --accent: #14b8a6;
+    --accent-dim: rgba(20,184,166,0.12);
+    --critical: #ef4444;
+    --critical-bg: rgba(239,68,68,0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245,158,11,0.1);
+    --success: #10b981;
+    --success-bg: rgba(16,185,129,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .app { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: #0d1218;
+    border-right: 1px solid var(--border);
+    padding: 18px 0;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .brand { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+  .brand-name { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .brand-pulse { color: var(--accent); }
+  .brand-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; margin-top: 2px; }
+  .nav-item {
+    padding: 10px 20px;
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    border-left: 2px solid transparent;
+  }
+  .nav-item:hover { background: var(--card); color: var(--text); }
+  .nav-item.active { background: var(--accent-dim); color: var(--accent); border-left-color: var(--accent); }
+  .nav-spacer { flex: 1; }
+  .nav-user { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; color: var(--text-dim); font-size: 13px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #0a0e14; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; }
+
+  /* Top bar */
+  .topbar { height: 56px; border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 16px; background: var(--bg); }
+  .live-pill { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--success-bg); border-radius: 12px; font-size: 12px; color: var(--success); font-weight: 500; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+  .topbar-spacer { flex: 1; }
+  .shift-indicator { color: var(--text-dim); font-size: 12px; }
+  .quick-action-btn { background: var(--accent); color: #0a0e14; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; }
+  .hospital-name { color: var(--text); font-size: 14px; font-weight: 500; }
+
+  /* Content */
+  .content { padding: 24px; flex: 1; overflow-y: auto; }
+  .page-header { margin-bottom: 20px; }
+  .page-title { font-size: 22px; font-weight: 700; }
+  .page-sub { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+
+  /* Savings Banner */
+  .savings-banner {
+    background: linear-gradient(135deg, rgba(20,184,166,0.12), rgba(20,184,166,0.04));
+    border: 1px solid rgba(20,184,166,0.25);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .savings-main { flex: 1; }
+  .savings-label { color: var(--accent); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .savings-value { font-size: 44px; font-weight: 800; color: var(--success); line-height: 1; }
+  .savings-sub { color: var(--text-dim); font-size: 13px; margin-top: 8px; max-width: 480px; }
+  .counters { display: flex; gap: 32px; }
+  .counter { text-align: center; }
+  .counter .num { font-size: 28px; font-weight: 700; }
+  .counter .lab { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+  .counter.pending .num { color: var(--warning); }
+  .counter.approved .num { color: var(--success); }
+  .counter.dismissed .num { color: var(--text-muted); }
+
+  /* Filter bar */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; }
+  .filter-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px; }
+  .chip { padding: 6px 12px; border: 1px solid var(--border-strong); border-radius: 16px; font-size: 12px; color: var(--text-dim); cursor: pointer; }
+  .chip.active { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+  .filter-spacer { flex: 1; }
+  .filter-select { background: var(--card); border: 1px solid var(--border-strong); color: var(--text); padding: 6px 10px; border-radius: 6px; font-size: 12px; }
+
+  /* Section heading */
+  .section-heading { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin: 24px 0 12px; }
+
+  /* Action card */
+  .actions-list { display: flex; flex-direction: column; gap: 10px; }
+  .action-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    align-items: center;
+  }
+  .action-card.critical { border-left: 4px solid var(--critical); }
+  .action-card.high { border-left: 4px solid var(--warning); }
+  .action-card.medium { border-left: 4px solid #6366f1; }
+  .action-card.approved { opacity: 0.55; border-left: 4px solid var(--success); }
+  .action-card.dismissed { opacity: 0.45; border-left: 4px solid var(--text-muted); }
+
+  .action-tags { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; min-width: 90px; }
+  .severity-tag { padding: 3px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .severity-tag.critical { background: var(--critical-bg); color: var(--critical); }
+  .severity-tag.high { background: var(--warning-bg); color: var(--warning); }
+  .severity-tag.medium { background: rgba(99,102,241,0.1); color: #818cf8; }
+  .unit-chip { padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.06); color: var(--text); }
+
+  .action-body { }
+  .action-fill { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .action-situation { color: var(--text-dim); font-size: 13px; margin-bottom: 6px; }
+  .action-meta { color: var(--text-muted); font-size: 12px; display: flex; gap: 14px; }
+
+  .action-right { display: flex; flex-direction: column; align-items: flex-end; gap: 12px; min-width: 180px; }
+  .savings-amount { color: var(--success); font-weight: 800; font-size: 24px; line-height: 1; }
+  .savings-label-small { color: var(--text-muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+  .action-buttons { display: flex; gap: 8px; }
+  .btn { padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+  .btn-approve { background: var(--accent); color: #0a0e14; }
+  .btn-dismiss { background: transparent; color: var(--text-dim); border-color: var(--border-strong); }
+  .btn-view { background: transparent; color: var(--accent); padding: 4px 0; font-size: 12px; }
+
+  .resolved-badge {
+    padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .resolved-badge.approved { background: var(--success-bg); color: var(--success); }
+  .resolved-badge.dismissed { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+  .resolved-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  .footnote { color: var(--text-muted); font-size: 11px; text-align: center; padding: 16px; border-top: 1px solid var(--border); margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-name"><span class="brand-pulse">&#9650;</span> HealthForce AI</div>
+      <div class="brand-sub">STAFFING COST CONTROL</div>
+    </div>
+    <div class="nav-item">&#9632; Dashboard</div>
+    <div class="nav-item active">&#9888; Recommended Actions</div>
+    <div class="nav-item">&#9636; Units</div>
+    <div class="nav-item">&#9783; Roster</div>
+    <div class="nav-item">&#9782; Shift Log</div>
+    <div class="nav-item">&#8644; Shift Handoff</div>
+    <div class="nav-item">&#9648; Reports</div>
+    <div class="nav-item">&#9881; Settings</div>
+    <div class="nav-spacer"></div>
+    <div class="nav-user">
+      <div class="avatar">JM</div>
+      <div>Janet Morales<br><span style="color:var(--text-muted);font-size:11px;">House Supervisor</span></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="topbar">
+      <div class="live-pill"><div class="live-dot"></div> Live Monitoring</div>
+      <div class="hospital-name">Metro General Hospital</div>
+      <div class="topbar-spacer"></div>
+      <div class="shift-indicator">Day shift &middot; 4h 23m elapsed</div>
+      <button class="quick-action-btn">+ Quick Action</button>
+      <div class="avatar">JM</div>
+    </header>
+
+    <div class="content">
+
+      <div class="page-header">
+        <div class="page-title">Recommended Actions</div>
+        <div class="page-sub">Real-time staffing actions that can reduce avoidable overtime and agency costs.</div>
+      </div>
+
+      <!-- Savings Banner -->
+      <div class="savings-banner">
+        <div class="savings-main">
+          <div class="savings-label">Potential Savings Today</div>
+          <div class="savings-value">$3,736</div>
+          <div class="savings-sub">Approve actions below to capture savings against the agency baseline. All approvals are logged for survey readiness.</div>
+        </div>
+        <div class="counters">
+          <div class="counter pending">
+            <div class="num">5</div>
+            <div class="lab">Pending</div>
+          </div>
+          <div class="counter approved">
+            <div class="num">2</div>
+            <div class="lab">Approved</div>
+          </div>
+          <div class="counter dismissed">
+            <div class="num">1</div>
+            <div class="lab">Dismissed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-label">Status:</span>
+        <span class="chip active">Pending</span>
+        <span class="chip">Approved</span>
+        <span class="chip">Dismissed</span>
+        <span class="chip">All</span>
+
+        <span style="width: 16px"></span>
+
+        <span class="filter-label">Severity:</span>
+        <span class="chip active">All</span>
+        <span class="chip">Critical</span>
+        <span class="chip">High</span>
+        <span class="chip">Medium</span>
+
+        <div class="filter-spacer"></div>
+
+        <select class="filter-select">
+          <option>All units</option>
+          <option>ER</option>
+          <option>ICU</option>
+          <option>Med-Surg</option>
+          <option>Step-Down</option>
+        </select>
+        <select class="filter-select">
+          <option>Today</option>
+          <option>This week</option>
+          <option>Custom range</option>
+        </select>
+      </div>
+
+      <!-- Pending Actions -->
+      <div class="section-heading">Actions Needed</div>
+      <div class="actions-list">
+
+        <div class="action-card critical">
+          <div class="action-tags">
+            <span class="severity-tag critical">Critical</span>
+            <span class="unit-chip">ER</span>
+          </div>
+          <div class="action-body">
+            <div class="action-fill">&rarr; Reassign 2 nurses from Med-Surg to ER</div>
+            <div class="action-situation">Emergency Room ratio at 4.3:1 (target 4:1). Projected 39 patients in next 4 hours.</div>
+            <div class="action-meta"><span>Detected 11:42</span><span>Source: Med-Surg has +3 capacity</span></div>
+          </div>
+          <div class="action-right">
+            <div style="text-align: right">
+              <div class="savings-amount">$912</div>
+              <div class="savings-label-small">Savings vs agency</div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-approve">&#10003; Approve</button>
+              <button class="btn btn-dismiss">&times; Dismiss</button>
+            </div>
+            <button class="btn-view">View cost options &rarr;</button>
+          </div>
+        </div>
+
+        <div class="action-card critical">
+          <div class="action-tags">
+            <span class="severity-tag critical">Critical</span>
+            <span class="unit-chip">Step-Down</span>
+          </div>
+          <div class="action-body">
+            <div class="action-fill">&rarr; Reassign 2 nurses from Med-Surg to Step-Down</div>
+            <div class="action-situation">Step-Down Unit ratio at 4.7:1 (target 4:1). Projected 17 patients.</div>
+            <div class="action-meta"><span>Detected 11:38</span><span>Source: Med-Surg has +3 capacity</span></div>
+          </div>
+          <div class="action-right">
+            <div style="text-align: right">
+              <div class="savings-amount">$912</div>
+              <div class="savings-label-small">Savings vs agency</div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-approve">&#10003; Approve</button>
+              <button class="btn btn-dismiss">&times; Dismiss</button>
+            </div>
+            <button class="btn-view">View cost options &rarr;</button>
+          </div>
+        </div>
+
+        <div class="action-card high">
+          <div class="action-tags">
+            <span class="severity-tag high">High</span>
+            <span class="unit-chip">ICU</span>
+          </div>
+          <div class="action-body">
+            <div class="action-fill">&rarr; Approve overtime for 1 nurse in ICU</div>
+            <div class="action-situation">ICU understaffed by 1 nurse. No float-eligible alternative available.</div>
+            <div class="action-meta"><span>Detected 11:30</span><span>Best internal option only</span></div>
+          </div>
+          <div class="action-right">
+            <div style="text-align: right">
+              <div class="savings-amount">$680</div>
+              <div class="savings-label-small">Savings vs agency</div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-approve">&#10003; Approve</button>
+              <button class="btn btn-dismiss">&times; Dismiss</button>
+            </div>
+            <button class="btn-view">View cost options &rarr;</button>
+          </div>
+        </div>
+
+        <div class="action-card medium">
+          <div class="action-tags">
+            <span class="severity-tag medium">Medium</span>
+            <span class="unit-chip">ER</span>
+          </div>
+          <div class="action-body">
+            <div class="action-fill">&rarr; Pre-position 1 float pool nurse for ER</div>
+            <div class="action-situation">Surge expected: 8 arrivals vs 3 discharges next 4h. Acting now avoids agency call later.</div>
+            <div class="action-meta"><span>Detected 11:15</span><span>Forecast-driven</span></div>
+          </div>
+          <div class="action-right">
+            <div style="text-align: right">
+              <div class="savings-amount">$1,232</div>
+              <div class="savings-label-small">Savings vs agency</div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-approve">&#10003; Approve</button>
+              <button class="btn btn-dismiss">&times; Dismiss</button>
+            </div>
+            <button class="btn-view">View cost options &rarr;</button>
+          </div>
+        </div>
+
+        <div class="action-card medium">
+          <div class="action-tags">
+            <span class="severity-tag medium">Medium</span>
+            <span class="unit-chip">Tomorrow Day</span>
+          </div>
+          <div class="action-body">
+            <div class="action-fill">&rarr; Add 1 PRN coverage for ICU Day shift tomorrow</div>
+            <div class="action-situation">Forecast gap: 2 absences logged for tomorrow's Day shift. Pattern requires 5 RN.</div>
+            <div class="action-meta"><span>Forward-looking</span><span>Act now to lock PRN at lower rate</span></div>
+          </div>
+          <div class="action-right">
+            <div style="text-align: right">
+              <div class="savings-amount">$0</div>
+              <div class="savings-label-small">Cost avoided estimate</div>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-approve">&#10003; Approve</button>
+              <button class="btn btn-dismiss">&times; Dismiss</button>
+            </div>
+            <button class="btn-view">View cost options &rarr;</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Approved/Dismissed History -->
+      <div class="section-heading">Earlier Today</div>
+      <div class="actions-list">
+
+        <div class="action-card approved">
+          <div class="action-tags">
+            <span class="severity-tag high">High</span>
+            <span class="unit-chip">Step-Down</span>
+          </div>
+          <div class="action-body">
+            <div class="action-fill">&rarr; Reassign 1 nurse from Med-Surg to Step-Down</div>
+            <div class="action-situation">Resolved by Cross-Unit Reassignment.</div>
+          </div>
+          <div class="action-right">
+            <div style="text-align: right">
+              <div class="savings-amount">$680</div>
+              <div class="savings-label-small">Saved (realized)</div>
+            </div>
+            <div class="resolved-badge approved">&#10003; Approved</div>
+            <div class="resolved-meta">10:21 by Janet Morales</div>
+          </div>
+        </div>
+
+        <div class="action-card approved">
+          <div class="action-tags">
+            <span class="severity-tag high">High</span>
+            <span class="unit-chip">ICU</span>
+          </div>
+          <div class="action-body">
+            <div class="action-fill">&rarr; Approve overtime for 1 RN in ICU</div>
+            <div class="action-situation">Resolved by Approve Overtime.</div>
+          </div>
+          <div class="action-right">
+            <div style="text-align: right">
+              <div class="savings-amount">$420</div>
+              <div class="savings-label-small">Saved (realized)</div>
+            </div>
+            <div class="resolved-badge approved">&#10003; Approved</div>
+            <div class="resolved-meta">09:48 by Janet Morales</div>
+          </div>
+        </div>
+
+        <div class="action-card dismissed">
+          <div class="action-tags">
+            <span class="severity-tag medium">Medium</span>
+            <span class="unit-chip">Telemetry</span>
+          </div>
+          <div class="action-body">
+            <div class="action-fill">&rarr; Reassign 1 nurse from Med-Surg to Telemetry</div>
+            <div class="action-situation">Reason: Not safe (skill mismatch).</div>
+          </div>
+          <div class="action-right">
+            <div style="text-align: right">
+              <div class="savings-amount" style="color:var(--text-muted);">$540</div>
+              <div class="savings-label-small">Foregone</div>
+            </div>
+            <div class="resolved-badge dismissed">&times; Dismissed</div>
+            <div class="resolved-meta">09:22 by Janet Morales</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footnote">HealthForce Capacity Planner V1 &middot; Recommended Actions Mockup &middot; Not Production Code</div>
+
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

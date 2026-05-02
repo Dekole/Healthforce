@@ -1,0 +1,676 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HealthForce - Unit Detail Mockup</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --card: #131820;
+    --card-hover: #1a212c;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --text: #e5e7eb;
+    --text-dim: #9ca3af;
+    --text-muted: #6b7280;
+    --accent: #14b8a6;
+    --accent-dim: rgba(20,184,166,0.12);
+    --critical: #ef4444;
+    --critical-bg: rgba(239,68,68,0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245,158,11,0.1);
+    --success: #10b981;
+    --success-bg: rgba(16,185,129,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+  .app { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar { width: 220px; background: #0d1218; border-right: 1px solid var(--border); padding: 18px 0; display: flex; flex-direction: column; flex-shrink: 0; }
+  .brand { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+  .brand-name { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .brand-pulse { color: var(--accent); }
+  .brand-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; margin-top: 2px; }
+  .nav-item { padding: 10px 20px; color: var(--text-dim); cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 13px; border-left: 2px solid transparent; }
+  .nav-item:hover { background: var(--card); color: var(--text); }
+  .nav-item.active { background: var(--accent-dim); color: var(--accent); border-left-color: var(--accent); }
+  .nav-spacer { flex: 1; }
+  .nav-user { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; color: var(--text-dim); font-size: 13px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #0a0e14; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; }
+  .topbar { height: 56px; border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 16px; background: var(--bg); }
+  .live-pill { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--success-bg); border-radius: 12px; font-size: 12px; color: var(--success); font-weight: 500; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+  .topbar-spacer { flex: 1; }
+  .shift-indicator { color: var(--text-dim); font-size: 12px; }
+  .quick-action-btn { background: var(--accent); color: #0a0e14; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; }
+  .hospital-name { color: var(--text); font-size: 14px; font-weight: 500; }
+
+  .content { padding: 24px; flex: 1; overflow-y: auto; }
+
+  .breadcrumb { color: var(--text-dim); font-size: 12px; margin-bottom: 12px; }
+  .breadcrumb a { color: var(--accent); cursor: pointer; }
+
+  /* Unit Header */
+  .unit-header-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; margin-bottom: 20px; border-left: 4px solid var(--critical); }
+  .unit-header-row { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+  .unit-title { font-size: 26px; font-weight: 700; }
+  .unit-type-chip { padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.06); color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+  .compliance-pill { padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+  .compliance-pill.bad { background: var(--critical-bg); color: var(--critical); }
+  .compliance-pill.ok { background: var(--success-bg); color: var(--success); }
+  .compliance-detail { color: var(--text-dim); font-size: 13px; margin-bottom: 8px; }
+  .active-state { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--success-bg); color: var(--success); border-radius: 12px; font-size: 12px; font-weight: 600; }
+
+  /* Recommended Action banner */
+  .rec-banner { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+  .rec-banner-icon { color: var(--critical); font-size: 18px; }
+  .rec-banner-text { flex: 1; }
+  .rec-banner-title { font-weight: 600; font-size: 14px; }
+  .rec-banner-sub { color: var(--text-dim); font-size: 12px; margin-top: 2px; }
+  .rec-banner-saving { color: var(--success); font-weight: 700; font-size: 16px; margin-right: 12px; }
+  .btn { padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+  .btn-approve { background: var(--accent); color: #0a0e14; }
+  .btn-dismiss { background: transparent; color: var(--text-dim); border-color: var(--border-strong); }
+
+  /* Layout */
+  .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+
+  /* Section card */
+  .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  .section-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .section-title .roster-link { margin-left: auto; color: var(--accent); font-size: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+
+  /* Mode toggle */
+  .mode-toggle { display: inline-flex; background: rgba(255,255,255,0.04); border: 1px solid var(--border-strong); border-radius: 8px; padding: 3px; }
+  .mode-btn { padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; color: var(--text-dim); border: none; background: transparent; }
+  .mode-btn.active { background: var(--accent); color: var(--bg); }
+  .mode-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .mode-help { color: var(--text-muted); font-size: 11px; }
+  .mode-help strong { color: var(--text-dim); }
+
+  /* Roster connection callout */
+  .roster-callout {
+    background: var(--accent-dim); border: 1px solid rgba(20,184,166,0.25); border-radius: 8px;
+    padding: 8px 12px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+    font-size: 12px;
+  }
+  .roster-callout-icon { color: var(--accent); }
+  .roster-callout-text { color: var(--text-dim); flex: 1; }
+  .roster-callout-text strong { color: var(--text); }
+  .roster-callout-link { color: var(--accent); cursor: pointer; font-weight: 600; white-space: nowrap; }
+
+  /* Detailed picker */
+  .role-group { margin-bottom: 14px; }
+  .role-group-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+  .role-group-name { font-size: 12px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
+  .role-group-count { font-size: 11px; color: var(--text-muted); }
+  .role-group-count.short { color: var(--critical); font-weight: 700; }
+  .role-group-count.met { color: var(--success); font-weight: 700; }
+  .nurse-row {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+    border-radius: 6px; font-size: 13px;
+  }
+  .nurse-row:hover { background: rgba(255,255,255,0.02); }
+  .nurse-row.absent { opacity: 0.5; }
+  .nurse-checkbox {
+    width: 18px; height: 18px; border: 2px solid var(--border-strong); border-radius: 4px;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .nurse-checkbox.checked { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 700; font-size: 11px; }
+  .nurse-checkbox.unchecked { background: transparent; }
+  .nurse-name { color: var(--text); font-weight: 500; min-width: 160px; }
+  .nurse-row.absent .nurse-name { color: var(--text-muted); text-decoration: line-through; }
+  .source-tag { padding: 2px 6px; border-radius: 3px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  .source-tag.primary { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+  .source-tag.float { background: rgba(6,182,212,0.15); color: #06b6d4; }
+  .absence-reason { color: var(--text-muted); font-size: 11px; margin-left: auto; font-style: italic; }
+  .add-float-btn {
+    background: transparent; border: 1px dashed var(--border-strong); color: var(--text-dim);
+    padding: 8px 14px; border-radius: 6px; font-size: 12px; cursor: pointer;
+    width: 100%; margin-top: 6px;
+  }
+  .add-float-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Edit Staffing button */
+  .edit-row { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 1px solid var(--border); margin-top: 6px; }
+  .edit-info { color: var(--text-muted); font-size: 12px; }
+  .btn-primary { background: var(--accent); color: var(--bg); padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border-strong); padding: 9px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+  /* Currently Assigned table */
+  .ca-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .ca-count { font-size: 13px; color: var(--text-dim); }
+  .ca-count strong { color: var(--text); font-weight: 700; }
+  .ca-filters { display: flex; gap: 6px; margin-left: auto; }
+  .ca-filter-chip { padding: 4px 10px; border: 1px solid var(--border-strong); border-radius: 14px; font-size: 11px; cursor: pointer; color: var(--text-dim); }
+  .ca-filter-chip.active { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+  .ca-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .ca-table th { text-align: left; padding: 8px 10px; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); font-weight: 600; }
+  .ca-table td { padding: 10px; border-bottom: 1px solid var(--border); }
+  .ca-table tr:last-child td { border-bottom: none; }
+  .ca-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .ca-name { color: var(--text); font-weight: 500; }
+  .ca-role { padding: 2px 6px; background: rgba(255,255,255,0.06); border-radius: 3px; font-size: 10px; font-weight: 600; }
+  .ca-role.rn { background: rgba(20,184,166,0.15); color: var(--accent); }
+  .ca-role.lpn { background: rgba(6,182,212,0.15); color: #06b6d4; }
+  .ca-role.cna { background: rgba(139,92,246,0.15); color: #a78bfa; }
+  .ca-cost { color: var(--text); font-weight: 600; }
+  .ca-cost.ot { color: var(--warning); }
+  .ca-actions { display: flex; gap: 4px; }
+  .ca-icon-btn { background: transparent; border: 1px solid var(--border-strong); color: var(--text-dim); width: 26px; height: 26px; border-radius: 5px; cursor: pointer; font-size: 12px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+  .ca-icon-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* Census */
+  .census-grid { display: grid; grid-template-columns: 2fr 3fr; gap: 18px; }
+  .patient-counter { background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; padding: 16px; text-align: center; }
+  .patient-counter .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .patient-counter .num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .counter-controls { display: flex; gap: 8px; margin-top: 10px; justify-content: center; }
+  .stepper-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border-strong); color: var(--text); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+  .acuity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .acuity-card { background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; padding: 10px 12px; }
+  .acuity-card .lab { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .acuity-card .val { font-size: 22px; font-weight: 700; margin-top: 4px; }
+  .acuity-card.high { border-color: rgba(239,68,68,0.3); }
+  .acuity-card.high .val { color: var(--critical); }
+  .acuity-card.mod { border-color: rgba(245,158,11,0.3); }
+  .acuity-card.mod .val { color: var(--warning); }
+  .acuity-card.low { border-color: rgba(16,185,129,0.3); }
+  .acuity-card.low .val { color: var(--success); }
+  .arrival-discharge { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .ad-card { background: var(--bg); border: 1px solid var(--border-strong); border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; }
+  .ad-card .lab { font-size: 11px; color: var(--text-dim); }
+  .ad-card .val { font-size: 22px; font-weight: 700; }
+  .ad-card .val.in { color: var(--warning); }
+  .ad-card .val.out { color: var(--success); }
+  .helper-text { color: var(--text-muted); font-size: 11px; margin-top: 8px; }
+
+  /* Cost section */
+  .cost-card { background: linear-gradient(135deg, rgba(20,184,166,0.06), rgba(20,184,166,0.02)); border: 1px solid rgba(20,184,166,0.2); border-radius: 12px; padding: 18px 20px; margin-bottom: 18px; }
+  .cost-total { font-size: 32px; font-weight: 800; }
+  .cost-label { color: var(--text-dim); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .cost-breakdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .cb-item { background: rgba(0,0,0,0.2); border-radius: 6px; padding: 10px; }
+  .cb-item .lab { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .cb-item .val { font-size: 16px; font-weight: 700; margin-top: 4px; }
+  .cb-item.regular .val { color: var(--accent); }
+  .cb-item.ot .val { color: var(--warning); }
+  .cb-item.float .val { color: #06b6d4; }
+  .cb-item.agency .val { color: var(--critical); }
+
+  /* Right column actions */
+  .inline-actions { display: flex; flex-direction: column; gap: 8px; }
+  .action-btn-large { background: var(--card); border: 1px solid var(--border-strong); border-radius: 8px; padding: 12px 14px; color: var(--text); cursor: pointer; text-align: left; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; }
+  .action-btn-large:hover { border-color: var(--accent); }
+  .action-btn-large .icon { width: 28px; height: 28px; border-radius: 6px; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .action-btn-large .text { flex: 1; }
+  .action-btn-large .desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Activity timeline */
+  .timeline-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .timeline-item:last-child { border-bottom: none; }
+  .timeline-time { color: var(--text-muted); width: 50px; flex-shrink: 0; }
+  .timeline-icon { width: 20px; height: 20px; border-radius: 4px; background: var(--accent-dim); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+  .timeline-text { flex: 1; color: var(--text-dim); }
+  .timeline-text strong { color: var(--text); }
+  .timeline-cost { color: var(--success); font-weight: 600; font-size: 11px; }
+
+  .footnote { color: var(--text-muted); font-size: 11px; text-align: center; padding: 16px; border-top: 1px solid var(--border); margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-name"><span class="brand-pulse">&#9650;</span> HealthForce AI</div>
+      <div class="brand-sub">STAFFING COST CONTROL</div>
+    </div>
+    <div class="nav-item">&#9632; Dashboard</div>
+    <div class="nav-item">&#9888; Recommended Actions</div>
+    <div class="nav-item active">&#9636; Units</div>
+    <div class="nav-item">&#9783; Roster</div>
+    <div class="nav-item">&#9782; Shift Log</div>
+    <div class="nav-item">&#8644; Shift Handoff</div>
+    <div class="nav-item">&#9648; Reports</div>
+    <div class="nav-item">&#9881; Settings</div>
+    <div class="nav-spacer"></div>
+    <div class="nav-user">
+      <div class="avatar">JM</div>
+      <div>Janet Morales<br><span style="color:var(--text-muted);font-size:11px;">House Supervisor</span></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="topbar">
+      <div class="live-pill"><div class="live-dot"></div> Live Monitoring</div>
+      <div class="hospital-name">Metro General Hospital</div>
+      <div class="topbar-spacer"></div>
+      <div class="shift-indicator">Day shift &middot; 4h 23m elapsed</div>
+      <button class="quick-action-btn">+ Quick Action</button>
+      <div class="avatar">JM</div>
+    </header>
+
+    <div class="content">
+
+      <div class="breadcrumb"><a>&larr; Dashboard</a> &middot; <a>Units</a> &middot; Emergency Room</div>
+
+      <!-- Unit Header -->
+      <div class="unit-header-card">
+        <div class="unit-header-row">
+          <div class="unit-title">Emergency Room</div>
+          <span class="unit-type-chip">ED</span>
+          <span class="compliance-pill bad">&#9888; 4.3:1 OUT of compliance</span>
+          <div style="flex:1"></div>
+          <span class="active-state">&#10003; Active since 06:42</span>
+        </div>
+        <div class="compliance-detail">34 patients / 8 RN = 4.3:1 &middot; Target 4:1 (state-mandated) &middot; 1 nurse short to reach compliance</div>
+      </div>
+
+      <!-- Recommended Action banner -->
+      <div class="rec-banner">
+        <div class="rec-banner-icon">&#9888;</div>
+        <div class="rec-banner-text">
+          <div class="rec-banner-title">Recommended: Reassign 1 nurse from Med-Surg to ER</div>
+          <div class="rec-banner-sub">Med-Surg currently overstaffed by 3. Cross-Unit Reassignment is the lowest-cost safe option.</div>
+        </div>
+        <div class="rec-banner-saving">$680 savings</div>
+        <button class="btn btn-approve">&#10003; Approve</button>
+        <button class="btn btn-dismiss">&times; Dismiss</button>
+      </div>
+
+      <!-- Two-column layout -->
+      <div class="grid">
+
+        <!-- LEFT COLUMN -->
+        <div>
+
+          <!-- Confirm Staffing - Detailed Mode visible -->
+          <div class="section-card">
+            <div class="section-title">
+              &#10003; Confirm Staffing for this Shift
+              <span class="roster-link">View Roster &rarr;</span>
+            </div>
+
+            <div class="mode-row">
+              <div class="mode-toggle">
+                <button class="mode-btn">&#9889; Quick Mode</button>
+                <button class="mode-btn active">&#9783; Detailed Mode</button>
+              </div>
+              <span class="mode-help"><strong>Detailed Mode active.</strong> Specific nurses tracked for richer audit trail.</span>
+            </div>
+
+            <div class="roster-callout">
+              <div class="roster-callout-icon">&#9783;</div>
+              <div class="roster-callout-text">
+                Nurse list pulled from <strong>Roster</strong>: nurses primary to ER, minus logged absences. Floats from other units shown in cyan.
+              </div>
+              <span class="roster-callout-link">Manage Roster &rarr;</span>
+            </div>
+
+            <!-- RN role group -->
+            <div class="role-group">
+              <div class="role-group-header">
+                <span class="role-group-name">Registered Nurses</span>
+                <span class="role-group-count short">8 of 8 expected &middot; 1 absence logged</span>
+              </div>
+
+              <div class="nurse-row absent">
+                <div class="nurse-checkbox unchecked"></div>
+                <div class="nurse-name">Tom Riley</div>
+                <span class="source-tag primary">Primary</span>
+                <span class="absence-reason">absent &middot; sick (logged 06:15)</span>
+              </div>
+
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Maria Rodriguez</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">David Park</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Lisa Thompson</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">James O'Brien</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Anna Williams</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Marcus Johnson</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Brian Foster</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Sarah Chen</div>
+                <span class="source-tag float">Float &middot; from Med-Surg</span>
+                <span class="absence-reason">added 10:21</span>
+              </div>
+
+              <button class="add-float-btn">+ Add a float nurse from another unit</button>
+            </div>
+
+            <!-- LPN role group -->
+            <div class="role-group">
+              <div class="role-group-header">
+                <span class="role-group-name">Licensed Practical Nurses</span>
+                <span class="role-group-count met">2 of 2 expected &middot; Met</span>
+              </div>
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Jenny Lee</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Patricia Brown</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+            </div>
+
+            <!-- CNA role group -->
+            <div class="role-group">
+              <div class="role-group-header">
+                <span class="role-group-name">Certified Nursing Assistants</span>
+                <span class="role-group-count met">2 of 2 expected &middot; Met</span>
+              </div>
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Carlos Mendoza</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+              <div class="nurse-row">
+                <div class="nurse-checkbox checked">&#10003;</div>
+                <div class="nurse-name">Aisha Davis</div>
+                <span class="source-tag primary">Primary</span>
+              </div>
+            </div>
+
+            <div class="edit-row">
+              <div class="edit-info">Last confirmed at 06:42 by Janet Morales (Detailed Mode). Changes here are tracked in the Shift Log.</div>
+              <button class="btn-secondary">Edit Staffing</button>
+            </div>
+          </div>
+
+          <!-- NEW: Currently Assigned Section -->
+          <div class="section-card">
+            <div class="section-title">
+              &#9783; Currently Assigned to this Unit
+              <span class="roster-link">View Roster &rarr;</span>
+            </div>
+
+            <div class="ca-header">
+              <div class="ca-count"><strong>12 nurses</strong> on shift right now &middot; 8 RN, 2 LPN, 2 CNA</div>
+              <div class="ca-filters">
+                <span class="ca-filter-chip active">All</span>
+                <span class="ca-filter-chip">RN</span>
+                <span class="ca-filter-chip">LPN</span>
+                <span class="ca-filter-chip">CNA</span>
+                <span class="ca-filter-chip">Floats</span>
+              </div>
+            </div>
+
+            <table class="ca-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Source</th>
+                  <th>On Shift</th>
+                  <th>Cost This Shift</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="ca-name">Maria Rodriguez</td>
+                  <td><span class="ca-role rn">RN</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$228</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn" title="Send home">&#8635;</button><button class="ca-icon-btn" title="Log call-out">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">David Park</td>
+                  <td><span class="ca-role rn">RN</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$228</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">Lisa Thompson</td>
+                  <td><span class="ca-role rn">RN</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$228</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">James O'Brien</td>
+                  <td><span class="ca-role rn">RN</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost ot">$340 <span style="font-size:10px;font-weight:500;">(OT)</span></td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">Anna Williams</td>
+                  <td><span class="ca-role rn">RN</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$228</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">Marcus Johnson</td>
+                  <td><span class="ca-role rn">RN</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$228</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">Brian Foster</td>
+                  <td><span class="ca-role rn">RN</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$228</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr style="background:rgba(6,182,212,0.04);">
+                  <td class="ca-name">Sarah Chen</td>
+                  <td><span class="ca-role rn">RN</span></td>
+                  <td><span class="source-tag float">Float &middot; Med-Surg</span></td>
+                  <td style="color:var(--text-dim);">2h 01m</td>
+                  <td class="ca-cost">$80</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn" title="Return to Med-Surg">&#8634;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">Jenny Lee</td>
+                  <td><span class="ca-role lpn">LPN</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$160</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">Patricia Brown</td>
+                  <td><span class="ca-role lpn">LPN</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$160</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">Carlos Mendoza</td>
+                  <td><span class="ca-role cna">CNA</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$110</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+                <tr>
+                  <td class="ca-name">Aisha Davis</td>
+                  <td><span class="ca-role cna">CNA</span></td>
+                  <td style="color:var(--text-dim);">Primary</td>
+                  <td style="color:var(--text-dim);">5h 42m</td>
+                  <td class="ca-cost">$110</td>
+                  <td><div class="ca-actions"><button class="ca-icon-btn">&#8635;</button><button class="ca-icon-btn">&#9888;</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Census -->
+          <div class="section-card">
+            <div class="section-title">&#9783; Census &amp; Acuity</div>
+            <div class="census-grid">
+              <div class="patient-counter">
+                <div class="label">Total Patients</div>
+                <div class="num">34</div>
+                <div class="counter-controls">
+                  <button class="stepper-btn">&minus;</button>
+                  <button class="stepper-btn">+</button>
+                </div>
+              </div>
+              <div>
+                <div class="acuity-grid">
+                  <div class="acuity-card high"><div class="lab">High Acuity</div><div class="val">5</div></div>
+                  <div class="acuity-card mod"><div class="lab">Moderate</div><div class="val">12</div></div>
+                  <div class="acuity-card low"><div class="lab">Low</div><div class="val">17</div></div>
+                </div>
+                <div class="helper-text">Counts only, no patient identifiers. Sum should equal total patients (currently: 34 &#10003;).</div>
+              </div>
+            </div>
+            <div class="arrival-discharge">
+              <div class="ad-card">
+                <div><div class="lab">Expected Arrivals (next 4h)</div><div class="helper-text" style="margin-top:0">From your conversation with charge nurse</div></div>
+                <div class="val in">+8</div>
+              </div>
+              <div class="ad-card">
+                <div><div class="lab">Expected Discharges (next 4h)</div><div class="helper-text" style="margin-top:0">From your conversation with charge nurse</div></div>
+                <div class="val out">-3</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cost Section -->
+          <div class="cost-card">
+            <div class="cost-label">Projected Labor Cost &middot; This Shift</div>
+            <div class="cost-total">$4,860</div>
+            <div class="cost-breakdown">
+              <div class="cb-item regular"><div class="lab">Regular</div><div class="val">$3,840</div></div>
+              <div class="cb-item ot"><div class="lab">Overtime</div><div class="val">$540</div></div>
+              <div class="cb-item float"><div class="lab">Float Pool</div><div class="val">$0</div></div>
+              <div class="cb-item agency"><div class="lab">Agency</div><div class="val">$480</div></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+
+          <!-- Inline Actions -->
+          <div class="section-card">
+            <div class="section-title">&#9889; Quick Actions for this Unit</div>
+            <div class="inline-actions">
+              <button class="action-btn-large">
+                <div class="icon">&#9888;</div>
+                <div class="text">Log Call-out<div class="desc">A nurse called out for this unit</div></div>
+              </button>
+              <button class="action-btn-large">
+                <div class="icon">&#9783;</div>
+                <div class="text">Request Sitter<div class="desc">Patient requires 1:1 observation</div></div>
+              </button>
+              <button class="action-btn-large">
+                <div class="icon">&#8635;</div>
+                <div class="text">Send a Nurse Home (Flex Down)<div class="desc">Census drop, save labor cost</div></div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Activity Timeline -->
+          <div class="section-card">
+            <div class="section-title">&#9782; Activity Timeline</div>
+            <div class="timeline-item">
+              <span class="timeline-time">11:42</span>
+              <div class="timeline-icon">&#9888;</div>
+              <div class="timeline-text">Recommended Action created: <strong>Reassign 1 from Med-Surg</strong></div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-time">11:35</span>
+              <div class="timeline-icon">+</div>
+              <div class="timeline-text">Census updated: <strong>34 patients</strong> (+2 admits)</div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-time">10:21</span>
+              <div class="timeline-icon">&rarr;</div>
+              <div class="timeline-text">Floated <strong>Sarah Chen (RN)</strong> from Med-Surg <span class="timeline-cost">+$680 saved</span></div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-time">10:15</span>
+              <div class="timeline-icon">&times;</div>
+              <div class="timeline-text">Call-out logged: <strong>Tom Riley (RN)</strong> &middot; sick</div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-time">06:42</span>
+              <div class="timeline-icon">&#10003;</div>
+              <div class="timeline-text">Confirmed in <strong>Detailed Mode</strong>: 7 RN, 2 LPN, 2 CNA</div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-time">06:30</span>
+              <div class="timeline-icon">&#9658;</div>
+              <div class="timeline-text">Day shift began</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="footnote">HealthForce Capacity Planner V1 &middot; Unit Detail Mockup &middot; Not Production Code</div>
+
+    </div>
+
+  </main>
+</div>
+</body>
+</html>
