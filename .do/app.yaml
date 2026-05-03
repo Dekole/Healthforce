@@ -6,7 +6,7 @@ regions:
 services:
   - name: static
     git:
-      repo_clone_url: https://github.com/<your‑org>/<your‑repo>.git
+      repo_clone_url: https://github.com/Dekole/Healthforce.git
       branch: main
     preserve_status: false
     run_command: ""
