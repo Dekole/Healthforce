@@ -1,0 +1,19 @@
+name: my-static-site
+spec_version: 1
+alerts: {}
+regions:
+  - nyc3
+services:
+  - name: static
+    git:
+      repo_clone_url: https://github.com/<your‑org>/<your‑repo>.git
+      branch: main
+    preserve_status: false
+    run_command: ""
+    port: 80
+    source_dir: ""
+    static_site:
+      output_dir: ""
+      index_document: index.html
+      error_document: error.html
+      catchall_document: index.html
