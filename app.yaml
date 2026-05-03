@@ -1,19 +1,13 @@
-name: my-static-site
+name: healthforce
 spec_version: 1
-alerts: {}
 regions:
   - nyc3
-services:
-  - name: static
+static_sites:
+  - name: healthforce
     git:
       repo_clone_url: https://github.com/Dekole/Healthforce.git
       branch: main
-    preserve_status: false
-    run_command: ""
-    port: 80
-    source_dir: ""
-    static_site:
-      output_dir: ""
-      index_document: index.html
-      error_document: error.html
-      catchall_document: index.html
+    source_dir: /
+    index_document: index.html
+    catchall_document: index.html
+    error_document: index.html
